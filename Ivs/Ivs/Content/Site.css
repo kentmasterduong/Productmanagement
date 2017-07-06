@@ -1,0 +1,160 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+    input.input-validation-error,
+    textarea.input-validation-error,
+    select.input-validation-error {
+        border: 1px solid #CD0A0A;
+    }
+
+.field-validation-error {
+    color: red;
+}
+
+.header {
+    text-align: center;
+    background-color: #f5f5f5;
+    text-align-last: center;
+}
+
+.row {
+    margin: 5px;
+}
+
+/*.table .row:hover {
+    background-color: #dcdcdc;
+}*/
+
+.vertical-align {
+    display: flex;
+    align-items: flex-end;
+}
+
+.line {
+    margin: 5px 20px;
+    height: 1px;
+    background-color: black;
+}
+
+.required {
+    color: red;
+}
+
+.container-design .row {
+    padding: 5px 100px;
+}
+
+.validation-summary-errors {
+    font-weight: 600;
+    font-style: italic;
+    font-size: 90%;
+    color: #ff0000;
+    margin: 10px 0;
+    border: 1px solid #ff0000;
+    padding: 15px 15px 10px 15px;
+    background-color: #ffeeee;
+}
+
+    .validation-summary-errors ul {
+        padding: 0px 0px 0px 20px;
+        margin-top: 5px;
+        margin-bottom: 0px;
+    }
+
+.validation-summary-valid {
+    display: none;
+}
+
+.success {
+    color: #4ba74b;
+    font-weight: bold;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+    .success p {
+        margin-top: 4px;
+        margin-bottom: -3px;
+    }
+
+
+.error {
+    font-weight: 600;
+    font-style: italic;
+    font-size: 90%;
+    color: #ff0000;
+    margin: 10px 0;
+    border: 1px solid #ff0000;
+    padding: 15px 15px 10px 15px;
+    background-color: #ffeeee;
+}
+
+hr {
+    margin: 5px;
+}
+
+.align-right {
+    text-align: right;
+    float: right;
+}
+
+    .align-right input {
+        text-align: left;
+        display: inline;
+    }
+
+    .align-right select {
+        text-align: left;
+        display: inline;
+    }
+
+.align-center .row .col-md-5 {
+    align-content: center;
+    align-items: center;
+    float: right;
+}
+
+.align-center {
+    align-content: center;
+    align-items: center;
+}
+
+.top .pagination {
+    margin: 5px;
+}
+
+.left {
+    text-align: right;
+}
+
+.right {
+    text-align: left;
+}
+
+.container-right {
+    float: right;
+}
+
+
+.member tr.selected {
+    background-color: #f5f5f5;
+}
+
+td.align-center {
+    text-align: center;
+}
