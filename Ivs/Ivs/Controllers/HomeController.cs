@@ -18,9 +18,9 @@ namespace Ivs.Controllers
 
             //Measure();
 
-            //Item();
+           // Item();
 
-           // UpdateItem();
+            // UpdateItem();
 
             return View();
         }
@@ -28,49 +28,46 @@ namespace Ivs.Controllers
         void Item()
         {
             List<CategoryDropdownlistDTO> list = new CategoryBL().SelectDropdownData();
-            int cateIndex = 0;
+            int cateIndex = list.Count - 1;
             DateTime date = DateTime.Now;
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
-                if (list.Count >= cateIndex)
-                {
-                    ItemDTO dto = new ItemDTO();
-                    dto.code = "Item_Code_" + i;
-                    dto.name = "Item_Name_" + i;
+                if (cateIndex == 0)
+                    cateIndex = list.Count - 1;
+                ItemDTO dto = new ItemDTO();
+                dto.code = "Mã_" + i;
+                dto.name = "Tên_" + i;
 
-                    dto.category_id = list[cateIndex++].id;
+                dto.category_id = list[cateIndex--].id;
 
-                    dto.inventory_measure_id = 0;
+                dto.inventory_measure_id = 0;
 
-                    dto.manufacture_size_measure_id = 0;
+                dto.manufacture_size_measure_id = 0;
 
-                    dto.manufacture_weight_measure_id = 0;
-                    dto.dangerous = true;
-                    dto.specification = "Specification_" + i;
-                    dto.description = "Description_" + i;
-                    dto.discontinued_datetime = date.AddDays(1);
-                    dto.inventory_expired = i;
-                    dto.inventory_standard_cost = i;
-                    dto.inventory_list_price = i;
-                    dto.manufacture_day = i;
-                    dto.manufacture_make = true;
-                    dto.manufacture_tool = true;
-                    dto.manufacture_finished_goods = true;
-                    dto.manufacture_size = "Size_" + i;
-                    dto.manufacture_weight = "Weight_" + i;
-                    dto.manufacture_style = "Style_" + i;
-                    dto.manufacture_class = "Class_" + i;
-                    dto.manufacture_color = "Color_" + i;
+                dto.manufacture_weight_measure_id = 0;
+                dto.dangerous = i % 2 == 0;
+                dto.specification = "Specification_" + i;
+                dto.description = "Mô tả_" + i;
+                dto.discontinued_datetime = date.AddDays(1);
+                dto.inventory_expired = i;
+                dto.inventory_standard_cost = i;
+                dto.inventory_list_price = i;
+                dto.manufacture_day = i;
+                dto.manufacture_make = i % 2 != 0;
+                dto.manufacture_tool = i % 2 != 0;
+                dto.manufacture_finished_goods = i % 2 == 0;
+                dto.manufacture_size = "Size_" + i;
+                dto.manufacture_weight = "Weight_" + i;
+                dto.manufacture_style = "Style_" + i;
+                dto.manufacture_class = "Class_" + i;
+                dto.manufacture_color = "Color_" + i;
 
-                    dto.created_by = 123;
-                    dto.updated_by = 123;
+                dto.created_by = 123;
+                dto.updated_by = 123;
 
-                    new ItemBL().InsertData(dto);
-                }
-                else
-                {
-                    cateIndex = 0;
-                }
+                new ItemBL().InsertData(dto);
+
+
 
             }
         }
@@ -85,7 +82,7 @@ namespace Ivs.Controllers
             List<CategoryDropdownlistDTO> listcate = new CategoryBL().SelectDropdownData();
             int cateIndex = 0;
             DateTime date = DateTime.Now;
-            for(int i = 0; i < count/1000; i++)
+            for (int i = 0; i < count / 1000; i++)
             {
                 foreach (var item in list)
                 {
@@ -287,7 +284,7 @@ namespace Ivs.Controllers
 
             int indexCategory = 0;
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 5000; i++)
             {
                 CategoryDTO dto = new CategoryDTO();
                 dto.code = "Code_" + i;

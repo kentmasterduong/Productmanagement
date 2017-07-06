@@ -5,7 +5,7 @@
 }
 
 <h2>Update Item</h2>
-<div class="row align-center">
+<div class="row">
     @if (!string.IsNullOrEmpty((string)TempData["Error"]))
     {
         <div id="error" class="error">
@@ -17,46 +17,6 @@
         @Html.AntiForgeryToken()
         @Html.ValidationSummary()
         <div class="row">
-            <div class="col-md-5">
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.inventory_standard_cost)
-                    @Html.TextBoxFor(m => m.inventory_standard_cost, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.inventory_list_price)
-                    @Html.TextBoxFor(m => m.inventory_list_price, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_day)
-                    @Html.TextBoxFor(m => m.manufacture_day, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_size_measure_id)
-                    @Html.DropDownListFor(m => m.manufacture_size_measure_id, (SelectList)ViewBag.listMeasure, "Please select", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.manufacture_size_measure_id)
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_weight)
-                    @Html.TextBoxFor(m => m.manufacture_weight, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_weight_measure_id)
-                    @Html.DropDownListFor(m => m.manufacture_weight_measure_id, (SelectList)ViewBag.listMeasure, "Please select", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.manufacture_weight_measure_id)
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_style)
-                    @Html.TextBoxFor(m => m.manufacture_style, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_class)
-                    @Html.TextBoxFor(m => m.manufacture_class, new { @class = "form-control" })
-                </div>
-                <div class="form-group">
-                    @Html.DisplayNameFor(model => model.manufacture_color)
-                    @Html.TextBoxFor(m => m.manufacture_color, new { @class = "form-control" })
-                </div>
-            </div>
             <div class="col-md-5">
                 <div class="form-group">
                     @Html.DisplayNameFor(model => model.code) <span class="required">  * </span>
@@ -120,26 +80,86 @@
                     @Html.TextAreaFor(m => m.description, new { @class = "form-control" })
                 </div>
             </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.inventory_standard_cost)
+                    @Html.TextBoxFor(m => m.inventory_standard_cost, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.inventory_list_price)
+                    @Html.TextBoxFor(m => m.inventory_list_price, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_day)
+                    @Html.TextBoxFor(m => m.manufacture_day, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_size_measure_id)
+                    @Html.DropDownListFor(m => m.manufacture_size_measure_id, (SelectList)ViewBag.listMeasure, "Please select", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.manufacture_size_measure_id)
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_weight)
+                    @Html.TextBoxFor(m => m.manufacture_weight, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_weight_measure_id)
+                    @Html.DropDownListFor(m => m.manufacture_weight_measure_id, (SelectList)ViewBag.listMeasure, "Please select", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.manufacture_weight_measure_id)
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_style)
+                    @Html.TextBoxFor(m => m.manufacture_style, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_class)
+                    @Html.TextBoxFor(m => m.manufacture_class, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    @Html.DisplayNameFor(model => model.manufacture_color)
+                    @Html.TextBoxFor(m => m.manufacture_color, new { @class = "form-control" })
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-md-5">
                 <div class="form-group">
-                    @Html.CheckBoxFor(m => m.manufacture_make)
-                    Manufacture Make
+                    <div class="row">
+                        Manufacture Make
+                    </div>
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.manufacture_make)
+                        <div class="slider round"/>
+                    </label>
                 </div>
                 <div class="form-group">
-                    @Html.CheckBoxFor(m => m.manufacture_tool)
-                    Manufacture Tool
+                    <div class="row">
+                        Manufacture Tool
+                    </div>
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.manufacture_tool)
+                        <div class="slider round" />
+                    </label>
                 </div>
             </div>
             <div class="col-md-5">
                 <div class="form-group">
-                    @Html.CheckBoxFor(m => m.manufacture_finished_goods)
-                    Manufacture Finished Goods
+                    <div class="row">
+                        Manufacture Finished Goods
+                    </div>
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.manufacture_finished_goods)
+                        <div class="slider round" />
+                    </label>
                 </div>
                 <div class="form-group">
-                    @Html.CheckBoxFor(model => model.dangerous)
-                    Dangerous
+                    <div class="row">
+                        Dangerous
+                    </div>
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.dangerous)
+                        <div class="slider round" />
+                    </label>
                 </div>
             </div>
         </div>
