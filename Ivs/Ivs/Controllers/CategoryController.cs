@@ -9,13 +9,14 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static Core.Common.CommonMethod;
 
 namespace Ivs.Controllers
 {
     public class CategoryController : Controller
     {
         private CategoryBL categoryBL = new CategoryBL();
-        
+
         [HttpGet]
         public ActionResult Category(CategoryModel model, int page = 1)
         {
@@ -47,7 +48,7 @@ namespace Ivs.Controllers
             CategoryBL bl = new CategoryBL();
             model.Category.page = page;
             model.Category.page_count = bl.CountData(model.Category);
-            TempData["SearchCount"] = model.Category.page_count + " row(s) has found."; 
+            TempData["SearchCount"] = model.Category.page_count + " row(s) has found.";
             SelectList listCategory = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
             ViewBag.ListCategory = listCategory;
             List<CategoryDTO> list;
@@ -68,25 +69,59 @@ namespace Ivs.Controllers
         [HttpPost]
         public ActionResult AddCategory(CategoryDTO category)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                ViewBag.Parent = new SelectList(new List<CategoryDTO>(), "id", "name");
-                return View(category);
+                if (ModelState.IsValid)
+                {
+                    if (!category.code.Contains(" "))
+                    {
+                        int count = categoryBL.CountData(new CategoryDTO() { code_key = category.code });
+                        if (count == 0)
+                        {
+                            category.created_by = 123;
+                            category.updated_by = 123;
+                            CommonData.ReturnCode returnCode = categoryBL.InsertData(category);
+                            if (returnCode == CommonData.ReturnCode.Success)
+                            {
+                                TempData["Success"] = "Inserted Successfully!";
+                            }
+                            else
+                            {
+                                TempData["Error"] = "Insert fail";
+                            }
+                            Session["model.Category"] = null;
+                            return RedirectToAction("Category");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("code", "The Code already is existed!");
+                            return RedirectToAction("Add");
+                        }
+                       
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("code", "The code must not have spaces ");
+                    }
+                }
+                else
+                {
+
+                }
             }
-            CommonData.ReturnCode returnCode = categoryBL.InsertData(category);
-            if (((int)CommonData.ReturnCode.Success != returnCode))
+            catch (DataException dex)
             {
-                ViewBag.Parent = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
-                return View(category);
+                ModelState.AddModelError("", "Lỗi không xác định");
             }
-            TempData["Success"] = "Inserted Successfully!";
-            return RedirectToAction("Category");
+            SelectList listCategory = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
+            ViewBag.ListCategory = listCategory;
+            return View("Add", category);
         }
 
         [HttpGet]
         public ActionResult Update(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (!id.IsNotNullOrEmpty())
             {
                 TempData["Error"] = "Data has already been deleted by other user!";
                 return RedirectToAction("Category");
@@ -99,20 +134,21 @@ namespace Ivs.Controllers
                 ViewBag.ListCategory = listCategory;
                 List<CategoryDTO> list;
                 categoryBL.SearchData(new CategoryDTO { id = int.Parse(id) }, out list);
-                model = list[0];
+                if (list.Count > 0)
+                {
+                    model = list[0];
+                }
+                else
+                {
+                    TempData["Error"] = "Data has already been deleted by other user!";
+                    return RedirectToAction("Category");
+                }
             }
-                
-            //int returnCode = _categoryBL.GetByID(long.Parse(id), out Model);
-            //if (Model == null)
-            //{
-            //    TempData["Error"] = "Data has already been deleted by other user!";
-            //    return RedirectToAction("Index");
-            //}
-            //if (!((int)Common.ReturnCode.Succeed == returnCode))
-            //{
-            //    Model = new CategoryModel();
-            //}
-            //ViewBag.Parent = new SelectList(_categoryBL.GetListParent(), "id", "name");
+            else
+            {
+                TempData["Error"] = "Error exception";
+                return RedirectToAction("Category");
+            }
             return View(model);
         }
 
@@ -125,9 +161,26 @@ namespace Ivs.Controllers
                 {
                     category.created_by = 123;
                     category.updated_by = 123;
-                    categoryBL.UpdateData(category);
 
-                    return RedirectToAction("Category");
+                    if(category.id == category.parent_id)
+                    {
+                        ModelState.AddModelError("parent_id", "Parent Category is duplicated with current category");
+                    }
+                    else
+                    {
+
+                        CommonData.ReturnCode returnCode = categoryBL.UpdateData(category);
+                        if (returnCode == CommonData.ReturnCode.Success)
+                        {
+                            TempData["Success"] = "Update Successfully!";
+                        }
+                        else
+                        {
+                            TempData["Error"] = "Update fail";
+                        }
+                        Session["model.Category"] = null;
+                        return RedirectToAction("Category");
+                    }
                 }
             }
             catch (DataException dex)
@@ -141,21 +194,23 @@ namespace Ivs.Controllers
 
             return View("Update", category);
         }
-        
+
         [HttpPost]
         public ActionResult DeleteCategory(string id)
         {
             //List<string> lstMsg = new List<string>();
 
-            //int returnCode = _categoryBL.Delete(id, out lstMsg);
-            //if (!((int)Common.ReturnCode.Succeed == returnCode))
-            //{
-            //    TempData["Success"] = "Deleted Successfully!";
-            //}
-            //else
-            //{
-            //    TempData["Error"] = lstMsg;
-            //}
+            if (!string.IsNullOrEmpty(id))
+            {
+                CommonData.ReturnCode returnCode = categoryBL.DeleteData(int.Parse(id));
+                if (CommonData.ReturnCode.Success == returnCode)
+                {
+                    TempData["Success"] = "Deleted Successfully!";
+                    Session["model.Category"] = null;
+                    return RedirectToAction("Category");
+                }
+            }
+            TempData["Error"] = "Delete fail";
             return RedirectToAction("Category");
         }
     }

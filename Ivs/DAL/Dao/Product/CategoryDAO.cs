@@ -222,7 +222,9 @@ namespace DAL.Dao.Product
             using (MySqlConnection connect = new MySqlConnection(constr))
             {
                 using (MySqlCommand command = new MySqlCommand(
-                    @"Delete FROM product_item Where `id` = @ID", connect))
+                    @"Delete FROM product_category Where `id` = @ID; 
+                    Update product_category set parent_id = 0 Where `id` = @ID;
+                    Update product_item set category_id = 0 Where category_id = @ID;", connect))
                 {
                     try
                     {

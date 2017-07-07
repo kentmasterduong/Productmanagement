@@ -13,6 +13,7 @@ namespace Core.Common
             Success = 0,
             UnSuccess = 1,
             DataNotFound =2,
+            DataExisted = 3,
 
         }
     }

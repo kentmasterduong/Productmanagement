@@ -71,20 +71,35 @@ namespace Ivs.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    item.created_by = 123;
-                    ItemBL itemBL = new ItemBL();
-                    int count = itemBL.CountData(new ItemSearchDTO() { code = item.code });
-                    if (count == 0)
+                    if(!item.code.Contains(" "))
                     {
-                        itemBL.InsertData(item);
-                        Session["model.Item"] = null;
-                    }
-                    else
+                        item.created_by = 123;
+                        ItemBL itemBL = new ItemBL();
+                        int count = itemBL.CountData(new ItemSearchDTO() { code_key = item.code });
+                        if (count == 0)
+                        {
+                            CommonData.ReturnCode returnCode = itemBL.InsertData(item);
+                            if (returnCode == CommonData.ReturnCode.Success)
+                            {
+                                TempData["Success"] = "Inserted Successfully!";
+                            }
+                            else
+                            {
+                                TempData["Error"] = "Insert fail";
+                            }
+                            Session["model.Item"] = null;
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("code", "The Code already is existed! ");
+                            return RedirectToAction("Add");
+                        }
+
+                        return RedirectToAction("Item");
+                    }else
                     {
-                        TempData["Error"] = "The Code already is exister!";
-                        return RedirectToAction("Add");
+                        ModelState.AddModelError("code", "The code must not have spaces ");
                     }
-                    return RedirectToAction("Item");
                 }
                 else
                 {
@@ -94,7 +109,6 @@ namespace Ivs.Controllers
             catch (DataException dex)
             {
                 ModelState.AddModelError("", "Lỗi không xác định");
-                return RedirectToAction("SubmissionFailed", item);
             }
 
             return View("Add", LoadItemAddForm(item));
@@ -123,7 +137,7 @@ namespace Ivs.Controllers
                 }
                 else
                 {
-                    TempData["Success"] = "0 row(s) has found.";
+                    TempData["Error"] = "Data has already been deleted by other user!";
                     return RedirectToAction("Item");
                 }
             }
@@ -142,9 +156,15 @@ namespace Ivs.Controllers
                 item.created_by = 123;
                 item.updated_by = 123;
                 ItemBL itemBL = new ItemBL();
-                itemBL.UpdateData(item);
-
-                TempData["Success"] = "Update Successful";
+                CommonData.ReturnCode returnCode = itemBL.UpdateData(item);
+                if (returnCode == CommonData.ReturnCode.Success)
+                {
+                    TempData["Success"] = "Update Successfully!";
+                }
+                else
+                {
+                    TempData["Error"] = "Update fail";
+                }
                 Session["model.Item"] = null;
                 return RedirectToAction("Item");
             }
@@ -163,11 +183,19 @@ namespace Ivs.Controllers
         [HttpPost]
         public ActionResult DeleteItem(string id)
         {
-            ItemBL itemBL = new ItemBL();
-            itemBL.DeleteData(id.ParseInt32());
-            TempData["Success"] = "Delete Successful";
-            Session["model.Item"] = null;
-
+            
+            if (!string.IsNullOrEmpty(id))
+            {
+                ItemBL itemBL = new ItemBL();
+                
+                CommonData.ReturnCode returnCode = itemBL.DeleteData(id.ParseInt32());
+                if (CommonData.ReturnCode.Success == returnCode)
+                {
+                    TempData["Success"] = "Delete Successful";
+                    Session["model.Item"] = null;
+                    return RedirectToAction("Category");
+                }
+            }
             return RedirectToAction("Item");
         }
 
