@@ -1,4 +1,5 @@
 ﻿using DTO.Item;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,6 +22,6 @@ namespace Ivs.Models
 
         public int page { get; set; } = 1;
 
-        public List<ItemDTO> Items { get; set; }
+        public StaticPagedList<ItemDTO> Items { get; set; }
     }
 }

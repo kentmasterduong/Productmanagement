@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Update";
+    Layout = ViewBag.Layout;
 }
 
 <h2>Update Item</h2>
@@ -123,53 +124,39 @@
         </div>
         <div class="row">
             <div class="col-md-5">
-                <div class="form-group">
-                    <div class="row">
-                        Manufacture Make
-                    </div>
+                <div class="row">Manufacture Make</div>
                     <label class="switch">
                         @Html.CheckBoxFor(m => m.manufacture_make)
-                        <div class="slider round"/>
-                    </label>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        Manufacture Tool
-                    </div>
+                        <div class="slider round"></div>
+                    </label>                    
+
+                <div class="row">Manufacture Tool</div>
                     <label class="switch">
                         @Html.CheckBoxFor(m => m.manufacture_tool)
-                        <div class="slider round" />
-                    </label>
-                </div>
+                        <div class="slider round"></div>
+                    </label>     
             </div>
             <div class="col-md-5">
-                <div class="form-group">
-                    <div class="row">
-                        Manufacture Finished Goods
-                    </div>
+                <div class="row">Manufacture Finished Goods</div>
                     <label class="switch">
                         @Html.CheckBoxFor(m => m.manufacture_finished_goods)
-                        <div class="slider round" />
-                    </label>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        Dangerous
-                    </div>
+                        <div class="slider round"></div>
+                    </label>                   
+
+                <div class="row">Dangerous</div>
                     <label class="switch">
                         @Html.CheckBoxFor(m => m.dangerous)
-                        <div class="slider round" />
-                    </label>
+                        <div class="slider round" ></div>
+                    </label>                    
                 </div>
-            </div>
         </div>
         <div class="row">
-            <div class="col-md-6 left">
+            <div class="col-md-5 left">
                 @Html.HiddenFor(m => m.id)
                 <button type="submit" class="btn btn-default">Submit</button>
             </div>
-            <div class="col-md-6 right">
-                <button class="btn btn-default">Cancel</button>
+            <div class="col-md-5 right">
+                <button type="reset"  class="btn btn-default">Reset</button>
             </div>
         </div>
     }

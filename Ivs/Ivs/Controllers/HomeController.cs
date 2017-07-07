@@ -18,9 +18,9 @@ namespace Ivs.Controllers
 
             //Measure();
 
-           // Item();
+            // Item();
 
-            // UpdateItem();
+            //UpdateItem();
 
             return View();
         }
@@ -48,7 +48,8 @@ namespace Ivs.Controllers
                 dto.dangerous = i % 2 == 0;
                 dto.specification = "Specification_" + i;
                 dto.description = "Mô tả_" + i;
-                dto.discontinued_datetime = date.AddDays(1);
+                date = date.AddDays(1);
+                dto.discontinued_datetime = date;
                 dto.inventory_expired = i;
                 dto.inventory_standard_cost = i;
                 dto.inventory_list_price = i;
@@ -74,30 +75,22 @@ namespace Ivs.Controllers
 
         void UpdateItem()
         {
-            List<ItemDTO> list = new List<ItemDTO>();
-            new ItemBL().SearchData(new ItemDTO(), out list);
 
             int count = new ItemBL().CountData(new ItemDTO());
 
-            List<CategoryDropdownlistDTO> listcate = new CategoryBL().SelectDropdownData();
-            int cateIndex = 0;
             DateTime date = DateTime.Now;
-            for (int i = 0; i < count / 1000; i++)
+            for (int i = 0; i < count / 20; i++)
             {
+                List<ItemDTO> list = new List<ItemDTO>();
+                new ItemBL().SearchData(new ItemDTO() { page = i }, out list);
                 foreach (var item in list)
                 {
                     date = date.AddDays(1);
                     item.discontinued_datetime = date;
-                    item.category_id = listcate[cateIndex++].id;
-                    item.page = i + 1;
                     new ItemBL().UpdateData(item);
-
-                    if (listcate.Count <= cateIndex)
-                    {
-                        cateIndex = 0;
-                    }
                 }
             }
+
         }
 
         void Measure()

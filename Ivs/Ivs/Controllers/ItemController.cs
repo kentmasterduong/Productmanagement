@@ -4,6 +4,7 @@ using DTO.Category;
 using DTO.Item;
 using DTO.Measure;
 using Ivs.Models;
+using PagedList;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace Ivs.Controllers
             {
                 model = new ResearchItemModel();
                 model.Item = new ItemDTO();
-                model.Items = new List<ItemDTO>();
+                model.Items = new StaticPagedList<ItemDTO>(new List<ItemDTO>(), 1, 20, 0);
             }
             else
             {
@@ -44,12 +45,6 @@ namespace Ivs.Controllers
                     model.page = 1;
                     Session["model.Item"] = model.Item;
                 }
-                if (model.Items == null)
-                {
-                    model.Items = new List<ItemDTO>();
-                }
-
-
             }
 
 
@@ -58,7 +53,7 @@ namespace Ivs.Controllers
             List<ItemDTO> list;
             model.Item.page = model.page;
             bl.SearchData(model.Item, out list);
-            model.Items = list;
+            model.Items = new StaticPagedList<ItemDTO>(list, model.page, 20, model.page_count);
             SelectList listCategory = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
             ViewBag.ListCategory = listCategory;
             return View(model);
@@ -107,14 +102,14 @@ namespace Ivs.Controllers
         }
 
         [HttpGet]
-        public ActionResult Update(string id)
+        public ActionResult Update(string id, string layout)
         {
             ItemDTO dto = new ItemDTO();
 
             if (string.IsNullOrEmpty(id))
             {
                 TempData["Error"] = "Data has already been deleted by other user!";
-                return RedirectToAction("Category");
+                return RedirectToAction("Item");
             }
 
             if (id.IsNumber())
@@ -133,11 +128,15 @@ namespace Ivs.Controllers
                     return RedirectToAction("Item");
                 }
             }
+            if (!layout.IsNotNullOrEmpty())
+            {
+                ViewBag.Layout = "~/Views/Shared/_Layout.cshtml";
+            }
             return View(LoadItemAddForm(dto));
         }
 
         [HttpPost]
-        public ActionResult UpdateItem(ItemDTO item)
+        public ActionResult UpdateItem(ItemDTO item, string layout)
         {
             try
             {
@@ -161,6 +160,10 @@ namespace Ivs.Controllers
                 return RedirectToAction("SubmissionFailed", item);
             }
 
+            if (!layout.IsNotNullOrEmpty())
+            {
+                ViewBag.Layout = "~/Views/Shared/_Layout.cshtml";
+            }
             return View("Update", LoadItemAddForm(item));
         }
 

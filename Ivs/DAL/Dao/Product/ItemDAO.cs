@@ -79,14 +79,9 @@ namespace DAL.Dao.Product
 
                     sql += " ORDER BY i.`updated_datetime` DESC";
                     sql += " LIMIT  @start, 20";
-                    if (inputDto.page > 1)
-                    {
-                        cmd.Parameters.AddWithValue("@start", 20 * (inputDto.page - 1));
-                    }
-                    else
-                    {
-                        cmd.Parameters.AddWithValue("@start", 0);
-                    }
+
+                    cmd.Parameters.AddWithValue("@start", 20 * (inputDto.page - 1));
+
 
                     cmd.Connection = con;
                     cmd.CommandText = sql;
@@ -316,7 +311,7 @@ namespace DAL.Dao.Product
             {
                 using (MySqlCommand cmd = new MySqlCommand())
                 {
-                    string sql = " SELECT COUNT(*) FROM product_item i WHERE TRUE ";
+                    string sql = " SELECT COUNT(id) FROM product_item i WHERE TRUE ";
 
                     #region Where Clause
                     if (dto.id != null)

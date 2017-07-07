@@ -1,61 +1,64 @@
 ﻿@model Ivs.Models.ResearchItemModel
+@using PagedList;
+@using PagedList.Mvc;
+
 @{
     ViewBag.Title = "Item";
 
     #region Phân trang
-    int pageNum = 0;
-    int countItem = 20;
-    int min = 1;
-    int max = min;
-    string previous = "#";
-    string next = "#";
+    //int pageNum = 0;
+    //int countItem = 20;
+    //int min = 1;
+    //int max = min;
+    //string previous = "#";
+    //string next = "#";
 
-    if ((Model.page_count % countItem) == 0)
-    {
-        pageNum = Model.page_count / countItem;
-    }
-    else
-    {
-        pageNum = Model.page_count / countItem + 1;
-    }
+    //if ((Model.page_count % countItem) == 0)
+    //{
+    //    pageNum = Model.page_count / countItem;
+    //}
+    //else
+    //{
+    //    pageNum = Model.page_count / countItem + 1;
+    //}
 
-    if (pageNum > 26)
-    {
-        min = Model.page - 12;
-        max = Model.page + 13;
+    //if (pageNum > 26)
+    //{
+    //    min = Model.page - 12;
+    //    max = Model.page + 13;
 
-        if (min < 1)
-        {
-            max = Model.page + 13 - min;
-            min = 1;
+    //    if (min < 1)
+    //    {
+    //        max = Model.page + 13 - min;
+    //        min = 1;
 
-        }
+    //    }
 
-        if (max > pageNum)
-        {
-            min = Model.page - 14 - (pageNum - max);
-            max = pageNum;
-        }
-    }
-    else
-    {
-        min = 1;
-        max = pageNum;
-    }
+    //    if (max > pageNum)
+    //    {
+    //        min = Model.page - 14 - (pageNum - max);
+    //        max = pageNum;
+    //    }
+    //}
+    //else
+    //{
+    //    min = 1;
+    //    max = pageNum;
+    //}
 
-    if (Model.page == pageNum)
-    {
-        previous = Url.Action("Item", "Item", new { page = (Model.page - 1) });
-    }
-    else if (Model.page > 1)
-    {
-        previous = Url.Action("Item", "Item", new { page = (Model.page - 1) });
-        next = Url.Action("Item", "Item", new { page = (Model.page + 1) });
-    }
-    else
-    {
-        next = Url.Action("Item", "Item", new { page = (Model.page + 1) });
-    }
+    //if (Model.page == pageNum)
+    //{
+    //    previous = Url.Action("Item", "Item", new { page = (Model.page - 1) });
+    //}
+    //else if (Model.page > 1)
+    //{
+    //    previous = Url.Action("Item", "Item", new { page = (Model.page - 1) });
+    //    next = Url.Action("Item", "Item", new { page = (Model.page + 1) });
+    //}
+    //else
+    //{
+    //    next = Url.Action("Item", "Item", new { page = (Model.page + 1) });
+    //}
     #endregion
 
 }
@@ -93,7 +96,7 @@
 </div>
 
 <div class="row top">
-
+@*
     <ul class="pagination">
 
         @if (Model.page > 1)
@@ -110,7 +113,7 @@
             </li>
         }
     </ul>
-
+*@
 </div>
 <div class="table-responsive" id="divLis">
     <table class="table table-bordered table-hover tableData">
@@ -176,7 +179,7 @@
 
                             @using (Html.BeginForm("Update", "Item", FormMethod.Post))
                             {
-                                <a href="#" data-href="@Url.Action("Update", "Item", new { id = item.id })" data-toggle="modal"  title="Edit" data-target="#update">
+                                <a href="#" data-href="@Url.Action("Update", "Item", new { id = item.id, @layout = "null" })" data-toggle="modal" title="Edit" data-target="#update">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                 </a>
                             }
@@ -189,42 +192,7 @@
     </table>
 </div>
 <div class="row">
-    @if (Model != null)
-    {
-        using (Html.BeginForm("Item", "Item", FormMethod.Get))
-        {
-            <ul class="pagination">
-
-                @if (Model.page > 1)
-                    {
-                    <li>
-                        <a href="@previous" title="Previous">&laquo;</a>
-                    </li>
-                }
-                @for (int i = min; i <= max; i++)
-                    {
-                        if (Model.page != i)
-                        {
-                        <li>
-                            <a href="@Url.Action("Item", "Item", new { page = i })" t title="@i">@i</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="active">
-                            <a href="#" title="@i">@i</a>
-                        </li>
-                    }
-                }
-                @if (Model.page < pageNum - 1)
-                    {
-                    <li>
-                        <a href="@next" title="Next">&raquo;</a>
-                    </li>
-                }
-            </ul>
-        }
-    }
+    @Html.PagedListPager(Model.Items, page => Url.Action("Item", new { page }), PagedListRenderOptions.ClassicPlusFirstAndLast)
 </div>
 
 @using (Html.BeginForm("DeleteItem", "Item", FormMethod.Post))
@@ -275,7 +243,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">View Information</h4>
+                <h4 class="modal-title" id="myModalLabel">Edit Information</h4>
             </div>
             <div class="modal-body" id="view-body">
 
