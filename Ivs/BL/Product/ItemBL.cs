@@ -23,14 +23,9 @@ namespace BL.Product
             return returnCode;
         }
 
-        public CommonData.ReturnCode SearchData(IDTO searchDto, out DataTable dtResult)
-        {
-            throw new NotImplementedException();
-        }
-
         public CommonData.ReturnCode SearchData(IDTO searchDto, out List<ItemDTO> list)
         {
-            CommonData.ReturnCode returnCode = ItemDAO.SearchData(searchDto as ItemDTO, out list);
+            CommonData.ReturnCode returnCode = ItemDAO.SearchData(searchDto as ItemSearchDTO, out list);
             
             return returnCode;
         }
@@ -41,9 +36,14 @@ namespace BL.Product
             return returnCode;
         }
 
-        public int CountData(ItemDTO updateDto)
+        public int CountData(ItemSearchDTO updateDto)
         {
             return ItemDAO.CountData(updateDto);
+        }
+
+        public CommonData.ReturnCode SearchData(IDTO searchDto, out List<IDTO> list)
+        {
+            throw new NotImplementedException();
         }
     }
 }

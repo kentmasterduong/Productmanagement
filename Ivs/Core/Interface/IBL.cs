@@ -10,7 +10,7 @@ namespace Core.Interface
     public interface IBL
     {
 
-        CommonData.ReturnCode SearchData(IDTO searchDto, out System.Data.DataTable dtResult);
+        CommonData.ReturnCode SearchData(IDTO searchDto, out List<IDTO> list);
 
         CommonData.ReturnCode UpdateData(IDTO updateDto);
 

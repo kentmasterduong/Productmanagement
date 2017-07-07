@@ -25,5 +25,7 @@ namespace DTO.Category
 
         [Display(Name = "Description")]
         public string description { get; set; }
+
+        public int page_count { get; set; }
     }
 }

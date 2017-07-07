@@ -2,6 +2,7 @@
 using Core.Common;
 using DTO.Category;
 using Ivs.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,33 +17,42 @@ namespace Ivs.Controllers
         private CategoryBL categoryBL = new CategoryBL();
         
         [HttpGet]
-        public ActionResult Category(string page, ResearchCategoryModel model)
+        public ActionResult Category(CategoryModel model, int page = 1)
         {
             ModelState.Clear();
             if (model == null)
             {
-                model = new ResearchCategoryModel();
+                model = new CategoryModel();
                 model.Category = new CategoryDTO();
-                model.Categorys = new List<CategoryDTO>();
+                model.Categorys = new StaticPagedList<CategoryDTO>(new List<CategoryDTO>(), 1, 20, 0);
             }
             else
             {
                 if (model.Category == null)
                 {
-                    model.Category = new CategoryDTO();
+                    if (Session["model.Category"] != null && page > 1)
+                    {
+                        model.Category = Session["model.Category"] as CategoryDTO;
+                    }
+                    else
+                    {
+                        model.Category = new CategoryDTO();
+                    }
                 }
-                if (model.Categorys == null)
+                else
                 {
-                    model.Categorys = new List<CategoryDTO>();
+                    Session["model.Category"] = model.Category;
                 }
             }
             CategoryBL bl = new CategoryBL();
-            model.page_count = bl.CountData(model.Category);
+            model.Category.page = page;
+            model.Category.page_count = bl.CountData(model.Category);
+            TempData["SearchCount"] = model.Category.page_count + " row(s) has found."; 
             SelectList listCategory = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
             ViewBag.ListCategory = listCategory;
             List<CategoryDTO> list;
             bl.SearchData(model.Category, out list);
-            model.Categorys = list;
+            model.Categorys = new StaticPagedList<CategoryDTO>(list, model.Category.page, 20, model.Category.page_count);
 
             return View(model);
         }

@@ -81,10 +81,14 @@ textarea {
 }
 
 .success {
+    font-weight: 600;
+    font-style: italic;
+    font-size: 90%;
     color: #4ba74b;
-    font-weight: bold;
-    padding: 5px;
-    margin-top: 5px;
+    margin: 10px 0;
+    border: 1px solid #22b000;
+    padding: 15px 15px 10px 15px;
+    background-color: #d5fee6;
 }
 
     .success p {

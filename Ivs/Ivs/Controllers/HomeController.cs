@@ -76,7 +76,7 @@ namespace Ivs.Controllers
         void UpdateItem()
         {
 
-            int count = new ItemBL().CountData(new ItemDTO());
+            int count = new ItemBL().CountData(new ItemSearchDTO());
 
             DateTime date = DateTime.Now;
             for (int i = 0; i < count / 20; i++)

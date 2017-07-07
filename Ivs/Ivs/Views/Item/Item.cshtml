@@ -1,5 +1,4 @@
-﻿@model Ivs.Models.ResearchItemModel
-@using PagedList;
+﻿@model Ivs.Models.ItemModel
 @using PagedList.Mvc;
 
 @{
@@ -68,7 +67,15 @@
 @if (!string.IsNullOrEmpty((string)TempData["Success"]))
 {
     <div id="success" class="success">
+        @TempData["SearchCount"]
         @TempData["Success"]
+    </div>
+}
+
+@if (!string.IsNullOrEmpty((string)TempData["SearchCount"]))
+{
+    <div class="success">
+        @TempData["SearchCount"]
     </div>
 }
 
@@ -141,7 +148,7 @@
         <tbody class="member">
             @if (Model != null)
             {
-                int n = (Model.page - 1) * 20 + 1;
+                int n = (Model.Item.page - 1) * 20 + 1;
                 foreach (var item in Model.Items)
                 {
                     string cate = Core.Common.CommonMethod.IsNotNullOrEmpty(item.category_parent_name)

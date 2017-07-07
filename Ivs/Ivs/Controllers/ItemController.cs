@@ -17,43 +17,41 @@ namespace Ivs.Controllers
         CategoryBL categoryBL = new CategoryBL();
 
         [HttpGet]
-        public ActionResult Item(ResearchItemModel model)
+        public ActionResult Item( ItemModel model, int page = 1)
         {
 
             ModelState.Clear();
             if (model == null)
             {
-                model = new ResearchItemModel();
-                model.Item = new ItemDTO();
+                model = new ItemModel();
+                model.Item = new ItemSearchDTO();
                 model.Items = new StaticPagedList<ItemDTO>(new List<ItemDTO>(), 1, 20, 0);
             }
             else
             {
                 if (model.Item == null)
                 {
-                    if (Session["model.Item"] != null && model.page > 1)
+                    if (Session["model.Item"] != null && page > 1)
                     {
-                        model.Item = Session["model.Item"] as ItemDTO;
+                        model.Item = Session["model.Item"] as ItemSearchDTO;
                     }
                     else
                     {
-                        model.Item = new ItemDTO();
+                        model.Item = new ItemSearchDTO();
                     }
                 }
                 else
                 {
-                    model.page = 1;
                     Session["model.Item"] = model.Item;
                 }
             }
-
-
             ItemBL bl = new ItemBL();
-            model.page_count = bl.CountData(model.Item);
+            model.Item.page_count = bl.CountData(model.Item);
+            TempData["SearchCount"] = model.Item.page_count + " row(s) has found.";
             List<ItemDTO> list;
-            model.Item.page = model.page;
+            model.Item.page = page;
             bl.SearchData(model.Item, out list);
-            model.Items = new StaticPagedList<ItemDTO>(list, model.page, 20, model.page_count);
+            model.Items = new StaticPagedList<ItemDTO>(list, model.Item.page, 20, model.Item.page_count);
             SelectList listCategory = new SelectList(categoryBL.SelectDropdownData(), "id", "name");
             ViewBag.ListCategory = listCategory;
             return View(model);
@@ -75,7 +73,7 @@ namespace Ivs.Controllers
                 {
                     item.created_by = 123;
                     ItemBL itemBL = new ItemBL();
-                    int count = itemBL.CountData(new ItemDTO() { code = item.code });
+                    int count = itemBL.CountData(new ItemSearchDTO() { code = item.code });
                     if (count == 0)
                     {
                         itemBL.InsertData(item);
@@ -116,8 +114,8 @@ namespace Ivs.Controllers
             {
                 List<ItemDTO> list;
                 ItemBL bl = new ItemBL();
-                dto.id = int.Parse(id);
-                bl.SearchData(dto, out list);
+
+                bl.SearchData(new ItemSearchDTO { id = int.Parse(id) }, out list);
                 if (list.Count > 0)
                 {
                     dto = list[0];
@@ -217,8 +215,8 @@ namespace Ivs.Controllers
             {
                 List<ItemDTO> list;
                 ItemBL bl = new ItemBL();
-                dto.id = int.Parse(id);
-                bl.SearchData(dto, out list);
+
+                bl.SearchData(new ItemSearchDTO { id = int.Parse(id) }, out list);
                 if (list.Count > 0)
                 {
                     dto = list[0];

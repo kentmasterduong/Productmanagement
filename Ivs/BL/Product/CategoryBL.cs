@@ -25,11 +25,6 @@ namespace BL.Product
             return returnCode;
         }
 
-        public CommonData.ReturnCode SearchData(IDTO searchDto, out DataTable dtResult)
-        {
-            throw new NotImplementedException();
-        }
-
         public CommonData.ReturnCode UpdateData(IDTO updateDto)
         {
             CommonData.ReturnCode returnCode = CategoryDAO.UpdateData(updateDto as CategoryDTO);
@@ -52,6 +47,11 @@ namespace BL.Product
         public int CountData(CategoryDTO updateDto)
         {
             return CategoryDAO.CountData(updateDto);
+        }
+
+        public CommonData.ReturnCode SearchData(IDTO searchDto, out List<IDTO> list)
+        {
+            throw new NotImplementedException();
         }
     }
 }

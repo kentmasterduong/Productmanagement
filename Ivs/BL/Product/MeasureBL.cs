@@ -23,10 +23,9 @@ namespace BL.Product
         {
             throw new NotImplementedException();
         }
-
-        public CommonData.ReturnCode SearchData(IDTO searchDto, out DataTable dtResult)
+        public CommonData.ReturnCode SearchData(IDTO searchDto, out List<MeasureDTO> list)
         {
-            CommonData.ReturnCode returnCode = MeasureDAO.SearchData(searchDto as MeasureDTO, out dtResult);
+            CommonData.ReturnCode returnCode = MeasureDAO.SearchData(searchDto as MeasureDTO, out list);
             return returnCode;
         }
 
@@ -40,6 +39,11 @@ namespace BL.Product
             List<MeasureDropdownlistDTO> list;
             MeasureDAO.SelectSimpleData(out list);
             return list;
+        }
+
+        public CommonData.ReturnCode SearchData(IDTO searchDto, out List<IDTO> dtResult)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace DAL.Dao.Product
     {
         private static string constr = ConfigurationManager.ConnectionStrings["constr"].ConnectionString;
 
-        public static CommonData.ReturnCode SearchData(ItemDTO inputDto, out List<ItemDTO> list)
+        public static CommonData.ReturnCode SearchData(ItemSearchDTO inputDto, out List<ItemDTO> list)
         {
             list = new List<ItemDTO>();
             CommonData.ReturnCode returnCode = CommonData.ReturnCode.Success;
@@ -28,7 +28,7 @@ namespace DAL.Dao.Product
                 {
                     string sql = string.Empty;
 
-                    sql = @"SELECT i.`id`, i.`code`, i.`name`, c.`name` as category_name, i.`discontinued_datetime`, i.`dangerous` ";
+                    sql = @"SELECT i.`id`, i.`code`, i.`name`, c.`name` as category_name, c.`category_parent_name`, i.`discontinued_datetime`, i.`dangerous` ";
                     if (inputDto.id != null)
                     {
                         sql += @", i.`inventory_measure_id`, i.`inventory_expired`, i.`inventory_standard_cost`, i.`specification`, i.`description`
@@ -38,9 +38,22 @@ namespace DAL.Dao.Product
                          , i.`manufacture_class`, i.`manufacture_color` ";
                     }
 
-                    sql += @" FROM product_item AS i 
-					        left JOIN product_category c on c.`id` = i.`category_id` 
+                    if (inputDto.category_id != null)
+                    {
+                        sql += @"FROM `product_item` i 
+                            JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
+                                Left JOIN (SELECT cp.`name`,  cp.`id` FROM product_category cp ) 
+                                cpp on cpp.`id` = c.`parent_id`) c ON i.`category_id` = c.`id`
+                            WHERE TRUE  ";
+                    }
+                    else
+                    {
+                        sql += @" FROM product_item AS i 
+					        JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
+                                Left JOIN (SELECT cp.`name`,  cp.`id` FROM product_category cp ) 
+                                cpp on cpp.`id` = c.`parent_id`) c ON i.`category_id` = c.`id`
                             WHERE TRUE ";
+                    }
 
 
                     #region Where Clause
@@ -71,18 +84,25 @@ namespace DAL.Dao.Product
 
                     if (inputDto.category_id != null)
                     {
-                        sql += " AND i.`category_id` = @category_id ";
+                        sql += " AND (i.`category_id` = @category_id OR i.`category_id` IN (SELECT cate.`id` FROM product_category cate WHERE cate.`parent_id` = @category_id ))";
                         cmd.Parameters.AddWithValue("@category_id", inputDto.category_id);
                     }
 
                     #endregion
 
-                    sql += " ORDER BY i.`updated_datetime` DESC";
+
+                    if (inputDto.category_id == null)
+                    {
+                        sql += " ORDER BY i.`updated_datetime` DESC";
+                    }
+                    else
+                    {
+                        sql += " ORDER BY i.`category_id`";
+                    }
+
                     sql += " LIMIT  @start, 20";
 
                     cmd.Parameters.AddWithValue("@start", 20 * (inputDto.page - 1));
-
-
                     cmd.Connection = con;
                     cmd.CommandText = sql;
 
@@ -95,13 +115,14 @@ namespace DAL.Dao.Product
                         {
                             foreach (DataRow item in dt.Rows)
                             {
+                                #region get data
                                 ItemDTO dto = new ItemDTO();
 
                                 dto.id = item["id"].ToString().ParseInt32();
                                 dto.code = item["code"].ToString();
                                 dto.name = item["name"].ToString();
                                 dto.category_name = item["category_name"].ToString();
-                                //dto.category_parent_name = item["category_parent_name"].ToString();
+                                dto.category_parent_name = item["category_parent_name"].ToString();
                                 dto.discontinued_datetime = item["discontinued_datetime"].ParseDateTime();
                                 dto.dangerous = item["dangerous"].ToString().ParseBool();
 
@@ -127,6 +148,9 @@ namespace DAL.Dao.Product
                                     dto.manufacture_class = item["manufacture_class"].ToString();
                                     dto.manufacture_color = item["manufacture_color"].ToString();
                                 }
+
+                                #endregion
+
                                 list.Add(dto);
                             }
                             returnCode = 0;
@@ -304,45 +328,64 @@ namespace DAL.Dao.Product
             return returnCode;
         }
 
-        public static int CountData(ItemDTO dto)
+        public static int CountData(ItemSearchDTO inputDto)
         {
             int count = 0;
             using (MySqlConnection con = new MySqlConnection(constr))
             {
                 using (MySqlCommand cmd = new MySqlCommand())
                 {
-                    string sql = " SELECT COUNT(id) FROM product_item i WHERE TRUE ";
+                    string sql = " SELECT COUNT(i.`id`)";
+
+
+                    if (inputDto.category_id != null)
+                    {
+                        sql += @"FROM `product_item` i JOIN (SELECT c.`id`, c.`parent_id`, cpp.`name` AS parent_name, c.`code`, c.`name`, c.`description` 
+                            FROM product_category c 
+                            Left JOIN (SELECT cp.`name`,  cp.`id` FROM product_category cp ) cpp on cpp.`id` = c.`parent_id`)
+                            c ON i.`category_id` = c.`id`
+                            WHERE TRUE  ";
+                    }
+                    else
+                    {
+                        sql += @" FROM product_item AS i 
+					        left JOIN product_category c on c.`id` = i.`category_id` 
+                            WHERE TRUE ";
+                    }
+
 
                     #region Where Clause
-                    if (dto.id != null)
+
+                    if (inputDto.id != null)
                     {
                         sql += " AND i.`id` = @ID ";
-                        cmd.Parameters.AddWithValue("@ID", dto.id);
+                        cmd.Parameters.AddWithValue("@ID", inputDto.id);
                     }
 
-                    if (dto.code_key.IsNotNullOrEmpty())
+                    if (inputDto.code_key.IsNotNullOrEmpty())
                     {
                         sql += " AND i.`code` = @Code ";
-                        cmd.Parameters.AddWithValue("@Code", dto.code_key);
+                        cmd.Parameters.AddWithValue("@Code", inputDto.code_key);
                     }
 
-                    if (dto.code.IsNotNullOrEmpty())
+                    if (inputDto.code.IsNotNullOrEmpty())
                     {
                         sql += " AND i.`code` LIKE CONCAT('%',@Code,'%') ";
-                        cmd.Parameters.AddWithValue("@Code", dto.code);
+                        cmd.Parameters.AddWithValue("@Code", inputDto.code);
                     }
 
-                    if (dto.name.IsNotNullOrEmpty())
+                    if (inputDto.name.IsNotNullOrEmpty())
                     {
                         sql += " AND i.`name` LIKE CONCAT('%',@Name,'%') ";
-                        cmd.Parameters.AddWithValue("@Name", dto.name);
+                        cmd.Parameters.AddWithValue("@Name", inputDto.name);
                     }
 
-                    if (dto.category_id != null)
+                    if (inputDto.category_id != null)
                     {
-                        sql += " AND i.`category_id` = @category_id ";
-                        cmd.Parameters.AddWithValue("@category_id", dto.category_id);
+                        sql += " AND (i.`category_id` = @category_id OR i.`category_id` IN (SELECT cate.`id` FROM product_category cate WHERE cate.`parent_id` = @category_id ))";
+                        cmd.Parameters.AddWithValue("@category_id", inputDto.category_id);
                     }
+
                     #endregion
 
                     con.Open();

@@ -44,6 +44,7 @@
     <Compile Include="Category\CategoryDropdownlistDTO.cs" />
     <Compile Include="Category\CategoryDTO.cs" />
     <Compile Include="Item\ItemDTO.cs" />
+    <Compile Include="Item\ItemSearchDTO.cs" />
     <Compile Include="Measure\MeasureDropdownListDTO.cs" />
     <Compile Include="Measure\MeasureDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
