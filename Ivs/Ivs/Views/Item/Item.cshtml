@@ -67,7 +67,6 @@
 @if (!string.IsNullOrEmpty((string)TempData["Success"]))
 {
     <div id="success" class="success">
-        @TempData["SearchCount"]
         @TempData["Success"]
     </div>
 }
@@ -177,9 +176,9 @@
                             <td></td>
                         }
                         <td>
-                            @using (Html.BeginForm("View", "Item", FormMethod.Post))
+                            @using (Html.BeginForm("ViewItem", "Item", FormMethod.Post))
                             {
-                                <a href="#" data-href="@Url.Action("View", "Item", new { id = item.id })" data-toggle="modal" data-target="#view" title="More Information">
+                                <a href="#" data-href="@Url.Action("ViewItem", "Item", new { id = item.id })" data-toggle="modal" data-target="#view" title="More Information">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                             }

@@ -41,7 +41,7 @@ namespace DAL.Dao.Product
                     if (inputDto.category_id != null)
                     {
                         sql += @"FROM `product_item` i 
-                            JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
+                           left JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
                                 Left JOIN (SELECT cp.`name`,  cp.`id` FROM product_category cp ) 
                                 cpp on cpp.`id` = c.`parent_id`) c ON i.`category_id` = c.`id`
                             WHERE TRUE  ";
@@ -49,7 +49,7 @@ namespace DAL.Dao.Product
                     else
                     {
                         sql += @" FROM product_item AS i 
-					        JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
+					        left JOIN (SELECT c.`id`, cpp.`name` AS category_parent_name, c.`name` FROM product_category c 
                                 Left JOIN (SELECT cp.`name`,  cp.`id` FROM product_category cp ) 
                                 cpp on cpp.`id` = c.`parent_id`) c ON i.`category_id` = c.`id`
                             WHERE TRUE ";

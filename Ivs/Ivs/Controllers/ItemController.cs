@@ -17,7 +17,7 @@ namespace Ivs.Controllers
         CategoryBL categoryBL = new CategoryBL();
 
         [HttpGet]
-        public ActionResult Item( ItemModel model, int page = 1)
+        public ActionResult Item(ItemModel model, int page = 1)
         {
 
             ModelState.Clear();
@@ -77,6 +77,7 @@ namespace Ivs.Controllers
                     if (count == 0)
                     {
                         itemBL.InsertData(item);
+                        Session["model.Item"] = null;
                     }
                     else
                     {
@@ -136,26 +137,20 @@ namespace Ivs.Controllers
         [HttpPost]
         public ActionResult UpdateItem(ItemDTO item, string layout)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    item.created_by = 123;
-                    item.updated_by = 123;
-                    ItemBL itemBL = new ItemBL();
-                    itemBL.UpdateData(item);
+                item.created_by = 123;
+                item.updated_by = 123;
+                ItemBL itemBL = new ItemBL();
+                itemBL.UpdateData(item);
 
-                    return RedirectToAction("Item");
-                }
-                else
-                {
-                    CheckRegex();
-                }
+                TempData["Success"] = "Update Successful";
+                Session["model.Item"] = null;
+                return RedirectToAction("Item");
             }
-            catch (DataException dex)
+            else
             {
-                ModelState.AddModelError("", "Lỗi không xác định");
-                return RedirectToAction("SubmissionFailed", item);
+                CheckRegex();
             }
 
             if (!layout.IsNotNullOrEmpty())
@@ -168,18 +163,12 @@ namespace Ivs.Controllers
         [HttpPost]
         public ActionResult DeleteItem(string id)
         {
-            try
-            {
-                ItemBL itemBL = new ItemBL();
-                itemBL.DeleteData(id.ParseInt32());
+            ItemBL itemBL = new ItemBL();
+            itemBL.DeleteData(id.ParseInt32());
+            TempData["Success"] = "Delete Successful";
+            Session["model.Item"] = null;
 
-                return RedirectToAction("Item");
-            }
-            catch (DataException dex)
-            {
-                ModelState.AddModelError("", "Lỗi không xác định");
-                return RedirectToAction("SubmissionFailed");
-            }
+            return RedirectToAction("Item");
         }
 
         private ItemDTO LoadItemAddForm(ItemDTO item)
@@ -201,7 +190,7 @@ namespace Ivs.Controllers
         }
 
         [HttpGet]
-        public ActionResult View(string id)
+        public ActionResult ViewItem(string id)
         {
             ItemDTO dto = new ItemDTO();
 
@@ -226,7 +215,7 @@ namespace Ivs.Controllers
                     TempData["Success"] = "0 row(s) has found.";
                 }
             }
-            return View(LoadItemAddForm(dto));
+            return View("View", LoadItemAddForm(dto));
         }
 
         private void CheckRegex()
