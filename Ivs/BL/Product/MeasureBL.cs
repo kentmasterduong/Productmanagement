@@ -16,12 +16,14 @@ namespace BL.Product
     {
         public CommonData.ReturnCode DeleteData(int id)
         {
-            throw new NotImplementedException();
+            CommonData.ReturnCode returnCode = MeasureDAO.DeleteData(id);
+            return returnCode;
         }
 
         public CommonData.ReturnCode InsertData(IDTO insertDto)
         {
-            throw new NotImplementedException();
+            CommonData.ReturnCode returnCode = MeasureDAO.InsertData(insertDto as MeasureDTO);
+            return returnCode;
         }
         public CommonData.ReturnCode SearchData(IDTO searchDto, out List<MeasureDTO> list)
         {
@@ -31,7 +33,8 @@ namespace BL.Product
 
         public CommonData.ReturnCode UpdateData(IDTO updateDto)
         {
-            throw new NotImplementedException();
+            CommonData.ReturnCode returnCode = MeasureDAO.UpdateData(updateDto as MeasureDTO);
+            return returnCode;
         }
 
         public List<MeasureDropdownlistDTO> SelectDropdownData()
