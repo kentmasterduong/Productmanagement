@@ -31,7 +31,7 @@ namespace Ivs.Controllers
             {
                 if (model.Category == null)
                 {
-                    if (Session["model.Category"] != null && page > 1)
+                    if (Session["model.Category"] != null && page >= 1)
                     {
                         model.Category = Session["model.Category"] as CategoryDTO;
                     }

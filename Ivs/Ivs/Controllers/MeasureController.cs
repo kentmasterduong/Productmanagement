@@ -31,7 +31,7 @@ namespace Ivs.Controllers
             {
                 if (model.Measure == null)
                 {
-                    if (Session["model.Measure"] != null && page > 1)
+                    if (Session["model.Measure"] != null && page >= 1)
                     {
                         model.Measure = Session["model.Measure"] as MeasureDTO;
                     }

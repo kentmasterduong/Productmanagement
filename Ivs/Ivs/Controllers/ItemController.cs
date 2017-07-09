@@ -31,7 +31,7 @@ namespace Ivs.Controllers
             {
                 if (model.Item == null)
                 {
-                    if (Session["model.Item"] != null && page > 1)
+                    if (Session["model.Item"] != null && page >= 1)
                     {
                         model.Item = Session["model.Item"] as ItemSearchDTO;
                     }
