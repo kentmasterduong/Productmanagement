@@ -74,7 +74,7 @@
                 <tr>
                     <td>@(n ++)</td>
                     <td>
-                        @Html.ActionLink(item.code, "View", "Category", new { @id = item.id }, new { })
+                        @Html.DisplayFor(modelItem => item.code)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.name)
