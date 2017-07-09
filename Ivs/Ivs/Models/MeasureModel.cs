@@ -5,8 +5,8 @@ namespace Ivs.Models
 {
     public class MeasureModel
     {
-        public MeasureDTO Item { get; set; }
+        public MeasureDTO Measure { get; set; }
 
-        public StaticPagedList<MeasureDTO> Items { get; set; }
+        public StaticPagedList<MeasureDTO> Measures { get; set; }
     }
 }

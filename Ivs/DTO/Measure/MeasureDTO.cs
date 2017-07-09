@@ -8,8 +8,6 @@ namespace DTO.Measure
         [Key]
         public int? id { get; set; }
 
-        public int? parent_id { get; set; }
-
         [Required(ErrorMessage = "Measure Code is required")]
         [Display(Name = "Measure Code")]
         public string code { get; set; }
@@ -22,5 +20,7 @@ namespace DTO.Measure
 
         [Display(Name = "Description")]
         public string description { get; set; }
+
+        public int page_count { get; set; }
     }
 }

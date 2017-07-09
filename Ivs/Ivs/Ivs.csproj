@@ -183,6 +183,8 @@
     <Content Include="Views\Item\Update.cshtml" />
     <Content Include="Views\Measure\Measure.cshtml" />
     <Content Include="Views\Item\View.cshtml" />
+    <Content Include="Views\Measure\Update.cshtml" />
+    <Content Include="Views\Measure\Add.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

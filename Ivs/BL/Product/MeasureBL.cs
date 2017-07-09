@@ -45,5 +45,10 @@ namespace BL.Product
         {
             throw new NotImplementedException();
         }
+
+        public int CountData(IDTO searchDto)
+        {
+            return MeasureDAO.CountData(searchDto as MeasureDTO);
+        }
     }
 }

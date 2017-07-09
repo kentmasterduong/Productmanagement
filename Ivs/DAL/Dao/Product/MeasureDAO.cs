@@ -26,7 +26,7 @@ namespace DAL.Dao.Product
                 using (MySqlCommand cmd = new MySqlCommand())
                 {
                     string sql = @"  
-                    SELECT c.`id`, c.`code`, c.`name`, c.`description` 
+                    SELECT m.`id`, m.`code`, m.`name`, m.`description` 
                     FROM product_measure m
                     WHERE TRUE  ";
 
@@ -34,30 +34,30 @@ namespace DAL.Dao.Product
                     #region Where Clause
                     if (inputDto.id != null)
                     {
-                        sql += " AND c.`id` = @ID ";
+                        sql += " AND m.`id` = @ID ";
                         cmd.Parameters.AddWithValue("@ID", inputDto.id);
                     }
 
                     if (inputDto.code_key.IsNotNullOrEmpty())
                     {
-                        sql += " AND c.`code` = @Code ";
+                        sql += " AND m.`code` = @Code ";
                         cmd.Parameters.AddWithValue("@Code", inputDto.code_key);
                     }
 
                     if (inputDto.code.IsNotNullOrEmpty())
                     {
-                        sql += " AND c.`code` LIKE CONCAT('%',@Code,'%') ";
+                        sql += " AND m.`code` LIKE CONCAT('%',@Code,'%') ";
                         cmd.Parameters.AddWithValue("@Code", inputDto.code);
                     }
 
                     if (inputDto.name.IsNotNullOrEmpty())
                     {
-                        sql += " AND c.`name` LIKE CONCAT('%',@Name,'%') ";
+                        sql += " AND m.`name` LIKE CONCAT('%',@Name,'%') ";
                         cmd.Parameters.AddWithValue("@Name", inputDto.name);
                     }
                     #endregion
 
-                    sql += " ORDER BY c.`updated_datetime` DESC";
+                    sql += " ORDER BY m.`updated_datetime` DESC";
                     sql += " LIMIT  @start, 20";
 
                     if (inputDto.page > 1)
@@ -101,8 +101,7 @@ namespace DAL.Dao.Product
 
             return returnCode;
         }
-
-
+        
         public static CommonData.ReturnCode SelectSimpleData(out List<MeasureDropdownlistDTO> list)
         {
             list = new List<MeasureDropdownlistDTO>();
@@ -135,6 +134,154 @@ namespace DAL.Dao.Product
             }
 
             return returnCode;
+        }
+
+        public static CommonData.ReturnCode InsertData(MeasureDTO dto)
+        {
+            CommonData.ReturnCode returnCode = CommonData.ReturnCode.Success;
+            try
+            {
+
+                using (MySqlConnection connect = new MySqlConnection(constr))
+                {
+                    using (MySqlCommand command = new MySqlCommand(
+                        @"INSERT INTO product_measure(
+                    `code`, `name`, `description`
+                    , `created_datetime`, `created_by`,`updated_datetime`,`updated_by`
+                    ) VALUES (
+                    @code, @name, @description
+                    , SYSDATE(), @created_by, SYSDATE(), @updated_by)", connect))
+                    {
+                        command.Parameters.AddWithValue("@code", dto.code);
+                        command.Parameters.AddWithValue("@name", dto.name);
+                        command.Parameters.AddWithValue("@description", dto.description);
+                        command.Parameters.AddWithValue("@created_by", dto.created_by);
+                        command.Parameters.AddWithValue("@updated_by", dto.updated_by);
+
+
+
+                        connect.Open();
+                        command.ExecuteNonQuery();
+                    }
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                returnCode = CommonData.ReturnCode.UnSuccess;
+            }
+            return returnCode;
+        }
+
+        public static CommonData.ReturnCode UpdateData(MeasureDTO dto)
+        {
+            CommonData.ReturnCode returnCode = CommonData.ReturnCode.Success;
+
+            using (MySqlConnection connect = new MySqlConnection(constr))
+            {
+                using (MySqlCommand command = new MySqlCommand(
+                    @"Update product_measure Set
+                    `name` = @name, `description` = @description,
+                    `updated_datetime` = SYSDATE(), `updated_by` = @updated_by Where `id` = @ID", connect))
+                {
+                    try
+                    {
+
+                        command.Parameters.AddWithValue("@name", dto.name);
+                        command.Parameters.AddWithValue("@description", dto.description);
+                        command.Parameters.AddWithValue("@updated_by", dto.updated_by);
+                        command.Parameters.AddWithValue("@ID", dto.id);
+
+
+
+                        connect.Open();
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        returnCode = CommonData.ReturnCode.UnSuccess;
+                    }
+
+
+                }
+
+
+            }
+            return returnCode;
+        }
+
+        public static CommonData.ReturnCode DeleteData(int id)
+        {
+            CommonData.ReturnCode returnCode = CommonData.ReturnCode.Success;
+
+            using (MySqlConnection connect = new MySqlConnection(constr))
+            {
+                using (MySqlCommand command = new MySqlCommand(
+                    @"Delete FROM product_category Where `id` = @ID; 
+                    Update product_category set parent_id = 0 Where `id` = @ID;
+                    Update product_item set category_id = 0 Where category_id = @ID;", connect))
+                {
+                    try
+                    {
+                        connect.Open();
+                        command.Parameters.AddWithValue("@ID", id);
+                        command.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        returnCode = CommonData.ReturnCode.UnSuccess;
+                    }
+                }
+
+
+            }
+            return returnCode;
+        }
+
+        public static int CountData(MeasureDTO dto)
+        {
+            int count = 0;
+            using (MySqlConnection con = new MySqlConnection(constr))
+            {
+                using (MySqlCommand cmd = new MySqlCommand())
+                {
+                    string sql = " SELECT COUNT(*) FROM product_measure m WHERE TRUE ";
+
+
+                    #region Where Clause
+                    if (dto.id != null)
+                    {
+                        sql += " AND m.`id` = @ID ";
+                        cmd.Parameters.AddWithValue("@ID", dto.id);
+                    }
+
+                    if (dto.code_key.IsNotNullOrEmpty())
+                    {
+                        sql += " AND m.`code` = @Code ";
+                        cmd.Parameters.AddWithValue("@Code", dto.code_key);
+                    }
+
+                    if (dto.code.IsNotNullOrEmpty())
+                    {
+                        sql += " AND m.`code` LIKE CONCAT('%',@Code,'%') ";
+                        cmd.Parameters.AddWithValue("@Code", dto.code);
+                    }
+
+                    if (dto.name.IsNotNullOrEmpty())
+                    {
+                        sql += " AND m.`name` LIKE CONCAT('%',@Name,'%') ";
+                        cmd.Parameters.AddWithValue("@Name", dto.name);
+                    }
+                    #endregion
+
+                    con.Open();
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    count = int.Parse(cmd.ExecuteScalar().ToString());
+                }
+            }
+            return count;
         }
     }
 }
